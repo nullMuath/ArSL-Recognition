@@ -1,104 +1,121 @@
-# ArSL Recognition — Arabic Sign Language Recognition
+<div align="center">
 
-A real-time Arabic Sign Language (ArSL) recognition system using **YOLO26** object detection with a **PySide6** GUI.
+<img src="docs/logo.png" width="420" alt="ArSL">
 
-## Dataset
+**Real-time Arabic Sign Language letter recognition, powered by YOLO26.**
 
-- **Classes**: 32 Arabic sign language letters
-- **Images**: ~150+ photos per letter (~4,800 total)
-- **Annotation**: YOLO-format bounding boxes
-- **Source**: ArSL21L dataset
+![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white) ![YOLO26](https://img.shields.io/badge/YOLO26-Ultralytics-111F68) ![PyTorch](https://img.shields.io/badge/PyTorch-2.11-EE4C2C?logo=pytorch&logoColor=white) ![PySide6](https://img.shields.io/badge/GUI-PySide6-41CD52?logo=qt&logoColor=white) ![OpenCV](https://img.shields.io/badge/OpenCV-4.10-5C3EE8?logo=opencv&logoColor=white) ![Classes](https://img.shields.io/badge/Letters-32-00E5AA) ![mAP50](https://img.shields.io/badge/mAP%4050-96.7%25-success) ![Platform](https://img.shields.io/badge/Platform-Windows-informational)
 
-## Model
+![ArSL Recognition recognizing Arabic letter signs one after another, in alphabetical order](docs/screenshots/demo.gif)
 
-- **Architecture**: YOLO26s (small, ~22M params)
-- **Input size**: 640×640
-- **Trained for**: 50 epochs
-- **Weights**: `runs/train/arsl21l/weights/best.pt`
-- **Confidence threshold**: 0.45
+[Features](#features) • [Screenshots](#screenshots) • [Installation](#installation) • [Usage](#usage) • [Specifications](#specifications) • [Documentation](#documentation)
+
+</div>
+
+ArSL Recognition reads Arabic Sign Language letters from a webcam or a photo. A YOLO26 detector, trained on 32 letter signs, finds the hand and classifies the letter in real time. A side panel then shows the Arabic letter, a reference hand sign, descriptions in Arabic and English, and its pronunciation.
 
 ## Features
 
-- **Live webcam recognition** — detects signs in real-time with FPS display
-- **Image upload** — detect signs from static images
-- **Letter panel** — shows Arabic/English name, description, hand sign photo, and pronunciation
-- **Auto-play audio** — hold a sign for 1.5 seconds to hear its pronunciation automatically, or click the play button
-- **Dark UI** — modern dark-themed interface with Arabic and English text
+| Feature | Description |
+|---|---|
+| **Live Recognition** | Detects signs from the webcam in real time, with bounding boxes, confidence scores and an FPS counter |
+| **32 Letters** | Covers the full Arabic alphabet, plus ال, لا and ة |
+| **Image Upload** | Recognizes a sign in a single photo (JPG, PNG, BMP or WebP) |
+| **Letter Panel** | Shows the Arabic letter, a reference hand sign, and Arabic and English names and descriptions |
+| **Pronunciation** | Hold a sign for 1.5 seconds to hear the letter, or press play at any time |
+| **Bilingual UI** | Dark interface with Arabic and English text, using Noto Sans Arabic and Inter |
+| **GPU or CPU** | Runs on an NVIDIA GPU (~60+ FPS) or on the CPU (~15–30 FPS) |
+| **Camera Select** | Choose between connected cameras in Settings |
 
-## Project Structure
+## Screenshots
 
-```
-ArSL-Recognetion/
-├── App.py                     # Main GUI application (PySide6)
-├── runs/train/arsl21l/        # Trained model weights
-├── assets/
-│   ├── sounds/                # Pronunciation audio files (key_arsl.mp3)
-│   └── fonts/                 # Inter variable font + NotoSansArabic
-├── hand_signs/                 # Hand sign reference images (key_arsl.png)
-├── src/
-│   ├── recognition/           # Recognition utilities
-│   └── ui/                    # UI components
-├── config/                     # Configuration files
-├── models/                     # Pre-trained YOLO models
-└── pyproject.toml              # Python project config
-```
+<div align="center">
 
-## Quick Start
+| Meem (م) | Ain (ع) |
+|:---:|:---:|
+| ![Meem detected](docs/screenshots/detect_meem.png) | ![Ain detected](docs/screenshots/detect_ain.png) |
+| <sub>[`1003_19_F_meem_0.jpg`](docs/samples/1003_19_F_meem_0.jpg) · confidence 0.97</sub> | <sub>[`1003_19_F_ain_0.jpg`](docs/samples/1003_19_F_ain_0.jpg) · confidence 0.89</sub> |
+| **Alef (ا)** | **Thal (ذ)** |
+| ![Alef detected](docs/screenshots/detect_aleff.png) | ![Thal detected](docs/screenshots/detect_thal.png) |
+| <sub>[`1003_19_F_aleff_0.jpg`](docs/samples/1003_19_F_aleff_0.jpg) · confidence 0.96</sub> | <sub>[`1003_19_F_thal_0.jpg`](docs/samples/1003_19_F_thal_0.jpg) · confidence 0.97</sub> |
 
-### 1. Install dependencies
+<br>
+
+| Al (ال) | Ba (ب) |
+|:---:|:---:|
+| ![Al detected](docs/screenshots/detect_al.png) | ![Ba detected](docs/screenshots/detect_bb.png) |
+| <sub>[`1003_19_F_al_0.jpg`](docs/samples/1003_19_F_al_0.jpg) · confidence 0.96</sub> | <sub>[`1003_19_F_bb_0.jpg`](docs/samples/1003_19_F_bb_0.jpg) · confidence 0.96</sub> |
+
+</div>
+
+> [!NOTE]
+> These screenshots use **test photos, not live webcam captures**. Each photo was shown to the app in place of a webcam frame, and the predictions and confidence scores are the model's real output.
+> The photos come from the validation split of [**ArSL21L: Arabic Sign Language Letter Dataset**](https://data.mendeley.com/datasets/8hrn3bvdvk/1)
+> by Batnasan, Gochoo, Otgonbold, Alnajjar and Shih (United Arab Emirates University), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+> All of them were taken by **signer `1003_19`** and can be found in the dataset's `data.zip` under `data/sign_data/images/1003_19_F_*.jpg`.
+> Full source paths and the citation are in [DATASET.md](docs/DATASET.md).
+
+<div align="center">
+
+**Idle**: before the webcam starts
+
+![Idle screen](docs/screenshots/idle.png)
+
+</div>
+
+## Installation
+
+Requires **Python 3.12 or newer**. An NVIDIA GPU is recommended. To run on the CPU, see [Configuration](docs/CONFIGURATION.md#cpu-or-gpu).
+
+**With uv** (recommended: installs the exact locked versions, including CUDA PyTorch)
 
 ```bash
-pip install ultralytics PySide6 opencv-python
-```
-
-Or using uv (if your project uses it):
-
-```bash
+git clone https://github.com/nullMuath/ArSL-Recognition.git
+cd ArSL-Recognition
 uv sync
+uv run python App.py
 ```
 
-### 2. Run the GUI
+**With pip**
 
 ```bash
+git clone https://github.com/nullMuath/ArSL-Recognition.git
+cd ArSL-Recognition
+pip install ultralytics PySide6 opencv-python
 python App.py
 ```
 
-### 3. Using the app
+The trained weights are included in the repository, so no training is needed.
 
-1. Press **▶** to start the webcam
-2. Show a sign language letter to the camera
-3. The right panel displays the detected letter with its details
-4. Hold the sign for **1.5 seconds** to hear pronunciation automatically
-5. Or click the **play button** to hear it manually
-6. Use the **folder button** to upload an image instead
+## Usage
 
-## Performance
+1. Press **▶** to start the webcam. To pick a different camera, open **Settings** (gear icon) first.
+2. Show a letter sign to the camera. The detected letter appears in the side panel.
+3. Hold the sign for **1.5 seconds** to hear its pronunciation, or press play in the panel.
+4. Press **⏸** to stop the webcam.
+5. To recognize a photo instead, click the **folder** button and choose an image.
 
-| Mode | Speed | Notes |
-|------|-------|-------|
-| CPU (default) | ~15–30 FPS | Depends on CPU |
-| GPU | ~60+ FPS | Set `DEVICE = 0` in App.py |
+## Specifications
 
-## Configuration
+| | |
+|---|---|
+| **Model** | YOLO26s (Ultralytics), ~22M parameters, 640 × 640 input |
+| **Dataset** | [ArSL21L](https://data.mendeley.com/datasets/8hrn3bvdvk/1): 32 Arabic letter signs, YOLO bounding-box labels |
+| **Training** | 50 epochs, batch size 16 |
+| **Accuracy** | 96.7% mAP@50, 83.6% mAP@50–95, 96.3% precision, 95.5% recall |
+| **Inference** | Confidence threshold 0.45, NVIDIA GPU or CPU |
+| **Weights** | `runs/train/arsl21l/weights/best.pt` |
+| **Tech stack** | Python 3.12, PyTorch, Ultralytics, OpenCV, PySide6 |
 
-Edit `App.py` to adjust:
+## Documentation
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DEVICE` | `"cpu"` | Inference device (`"cpu"` or `0` for GPU) |
-| `CONF` | `0.45` | Detection confidence threshold (0–1) |
-| `IMG_SIZE` | `640` | Input image size |
+- [Architecture](docs/ARCHITECTURE.md): project layout, the recognition pipeline, threading and the letter panel
+- [Configuration](docs/CONFIGURATION.md): settings, CPU or GPU, adding letters and building the Windows executable
+- [Training](docs/TRAINING.md): the model, training setup, results and how to retrain
+- [Dataset](docs/DATASET.md): ArSL21L, its citation and the exact sources of the README photos
 
-## Adding New Letters
+---
 
-1. Add hand sign images to `hand_signs/` as `{key}_arsl.png`
-2. Add pronunciation audio to `assets/sounds/` as `{key}_arsl.mp3`
-3. Add the letter to `LETTER_DATA` in `App.py`
-4. Retrain the model with the new class
+## License
 
-## Built With
-
-- **YOLO26** (ultralytics) — object detection
-- **PySide6** — GUI framework
-- **OpenCV** — camera capture & image processing
-- **NotoSansArabic** — Arabic text rendering
+All rights reserved © 2026 nullMuath

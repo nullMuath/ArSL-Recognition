@@ -8,3 +8,22 @@ RGB_Dataset/
 # Python cache
 __pycache__/
 *.pyc
+# Local sample photos for picking screenshots
+photo_candidates/
+
+# PyInstaller build output
+build/
+
+# IDE and local notes
+.idea/
+.opencode-context.md
+
+# Large or regenerable model/training files
+models/
+runs/train/*/weights/last.pt
+runs/train/*/train_batch*.jpg
+runs/train/*/val_batch*.jpg
+
+# Only NotoSansArabic-Black.ttf is loaded by the app
+assets/fonts/NotoSansArabic*.ttf
+!assets/fonts/NotoSansArabic-Black.ttf
